@@ -2,6 +2,8 @@
 """
 Control pimoroni targets.
 
+This is reworked from pimoroni's example script.
+
 Usage:
     lightcontrol.py <socket#|ALL> <on|off>
 
