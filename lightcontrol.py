@@ -86,10 +86,6 @@ def toggle_sockets(actionstring):
         else:
             logging.debug("Setting TRUE")
 	    GPIO.output (int(k), True)
-        ##logging.debug("myswitch: '" + myswitch + "'")
-        ##logging.debug("GPIO.output (" + k +", " + myswitch +")")
-	##GPIO.output (int(k), myswitch)
-	##GPIO.output (16, myswitch)
     
     # let it settle, encoder requires this
     time.sleep(0.1)
