@@ -78,7 +78,7 @@ def toggle_sockets(actionstring):
     mydict = dict(zip(gpio_pins.split(), list(actionstring)))
 
     for k,v in mydict.items():
-        logging.debug("key.....: '" + k + "' value '" + str(v) + "'")
+        logging.debug("key.........: '" + k + "' value '" + str(v) + "'")
         if v == '0':
             logging.debug("Setting FALSE")
 	    GPIO.output (int(k), False)
