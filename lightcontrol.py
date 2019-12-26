@@ -29,11 +29,11 @@ script_dir = os.path.dirname(__file__)
 retcode = 0
 
 # these are the socket addresses...
-sockall="0 1 1"	# all sockets...
-sock1="1 1 1"
-sock2="1 1 0"
-sock3="1 0 1"
-sock4="1 0 0"
+sockall="011"	# all sockets...
+sock1="111"
+sock2="110"
+sock3="101"
+sock4="100"
 
 if os.getenv("DEBUG", "") == "":
     logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.INFO)
@@ -70,13 +70,12 @@ def init_gpio():
     GPIO.output (16, False)
     GPIO.output (13, False)
 
-def toggle_sockets(actionstring):
-    logging.debug("toggle_sockets('" + actionstring + "')")
 
+def toggle_sockets(actionstring):
     gpio_pins = "13 16 15 11"
 
     mydict = {}
-    mydict = dict(zip(gpio_pins.split(), actionstring.split()))
+    mydict = dict(zip(gpio_pins.split(), list(actionstring)))
 
     for k,v in mydict.items():
         logging.debug("key.....: '" + k + "' value '" + str(v) + "'")
@@ -106,19 +105,15 @@ logging.debug("script_dir..: '" + script_dir + "'")
 init_gpio()
 
 target = sys.argv[1].upper()
-logging.debug("target......: '" + target + "'")
+logging.info("Socket......: '" + target + "'")
 action = sys.argv[2].upper()
-logging.debug("action......: '" + action + "'")
+logging.info("Action......: '" + action + "'")
 
 actionstring = ""
 if action == 'ON':
-    logging.info("Turn ON")
-    actionstring = "1 "
+    actionstring = "1"
 else:
-    logging.info("Turn OFF")
-    actionstring = "0 "
-logging.debug("actionstring: '" + actionstring + "'")
-
+    actionstring = "0"
 
 if target == "1":
     logging.debug("Socket 1")
