@@ -5,10 +5,10 @@ Control pimoroni targets.
 This is reworked from pimoroni's example script.
 
 Usage:
-    lightcontrol.py <socket#|ALL> <on|off>
+    lightcontrol.py <on|off> <socket#|ALL> 
 
 Example:
-    lightcontrol.py 1 OFF
+    lightcontrol.py ON 1
 
 """
 #import the required modules
@@ -52,10 +52,10 @@ logging.debug("script_dir..: '" + script_dir + "'")
 timedelay = random.randrange(0, 45)
 time.sleep(timedelay)
 
-target = sys.argv[1].upper()
-logging.info("Socket......: '" + target + "'")
-action = sys.argv[2].lower()
+action = sys.argv[1].lower()
 logging.info("Action......: '" + action + "'")
+target = sys.argv[2].upper()
+logging.info("Socket......: '" + target + "'")
 
 
 if target == "ALL":
