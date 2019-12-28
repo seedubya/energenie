@@ -16,6 +16,7 @@ from gpiozero import Energenie
 import logging
 import os
 import random
+import socket
 import sys
 import time
 
@@ -45,11 +46,28 @@ def toggle_socket(target, action):
         socket.off()
 
 
+def get_lock(process_name):
+    # Without holding a reference to our socket somewhere it gets garbage
+    # collected when the function exits
+    get_lock._lock_socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+
+    while True:
+        try:
+            get_lock._lock_socket.bind('\0' + process_name)
+            # we have the lock...
+        except:
+            logging.info("I'm already running, sleeping for a bit...")
+            timedelay = random.randrange(0, 10)
+            time.sleep(timedelay)
+            continue
+        break
+
+
 logging.info(script_name + " starting...")
 logging.debug("script_dir..: '" + script_dir + "'")
 
-# this is to avoid collisions when multiple commands are run at once...
-timedelay = random.randrange(0, 45)
+# reduce startup race conditions...
+timedelay = random.randrange(0, 3)
 time.sleep(timedelay)
 
 action = sys.argv[1].lower()
@@ -57,6 +75,7 @@ logging.info("Action......: '" + action + "'")
 target = sys.argv[2].upper()
 logging.info("Socket......: '" + target + "'")
 
+get_lock(script_name)
 
 if target == "ALL":
     for socket in range(1,5):
@@ -64,7 +83,6 @@ if target == "ALL":
         time.sleep(1)
 else:
     toggle_socket(target, action)
-
 
 logging.info(script_name + " completed successfully.")
 sys.exit(retcode)
