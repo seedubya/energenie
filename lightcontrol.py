@@ -21,22 +21,6 @@ import sys
 import time
 
 
-if len(sys.argv) < 2:
-    print(__doc__)
-    sys.exit(1)
-
-
-script_name = os.path.basename(__file__)
-script_dir = os.path.dirname(__file__)
-retcode = 0
-
-
-if os.getenv("DEBUG", "") == "":
-    logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.INFO)
-else:
-    logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.DEBUG)
-
-
 def toggle_socket(target, action):
     socket = Energenie(int(target))
     logging.info("Turning '" + action + "' socket '" + str(target) + "'")
@@ -63,26 +47,44 @@ def get_lock(process_name):
         break
 
 
-logging.info(script_name + " starting...")
-logging.debug("script_dir..: '" + script_dir + "'")
+if __name__ == "__main__":
 
-# reduce startup race conditions...
-timedelay = random.randrange(0, 3)
-time.sleep(timedelay)
+    if len(sys.argv) < 3:
+        print(__doc__)
+        sys.exit(1)
 
-action = sys.argv[1].lower()
-logging.info("Action......: '" + action + "'")
-target = sys.argv[2].upper()
-logging.info("Socket......: '" + target + "'")
 
-get_lock(script_name)
+    script_name = os.path.basename(__file__)
+    script_dir = os.path.dirname(__file__)
+    retcode = 0
 
-if target == "ALL":
-    for socket in range(1,5):
-        toggle_socket(socket, action)
-        time.sleep(1)
-else:
-    toggle_socket(target, action)
 
-logging.info(script_name + " completed successfully.")
-sys.exit(retcode)
+    if os.getenv("DEBUG", "") == "":
+        logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.INFO)
+    else:
+        logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.DEBUG)
+
+    logging.info(script_name + " starting...")
+    logging.debug("script_dir..: '" + script_dir + "'")
+    logging.debug("len.........: '" + str(len(sys.argv)) + "'")
+
+    # reduce startup race conditions...
+    timedelay = random.randrange(0, 3)
+    time.sleep(timedelay)
+
+    action = sys.argv[1].lower()
+    logging.info("Action......: '" + action + "'")
+    target = sys.argv[2].upper()
+    logging.info("Socket......: '" + target + "'")
+
+    get_lock(script_name)
+
+    if target == "ALL":
+        for socket in range(1,5):
+            toggle_socket(socket, action)
+            time.sleep(1)
+    else:
+        toggle_socket(target, action)
+
+    logging.info(script_name + " completed successfully.")
+    sys.exit(retcode)
