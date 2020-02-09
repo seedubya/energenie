@@ -2,32 +2,25 @@
 """
 Control pimoroni targets.
 
-This is reworked from pimoroni's example script.
+This is reworked from pimoroni's example script. This will take several sockets
+as arguments...
 
 Usage:
     lightcontrol.py <on|off> <socket#|ALL> 
 
 Example:
-    lightcontrol.py ON 1
+    lightcontrol.py ON 1 2 3
 
 """
 #import the required modules
-from gpiozero import Energenie
+##from gpiozero import Energenie
+from energenie import switch_on, switch_off
 import logging
 import os
 import random
 import socket
 import sys
 import time
-
-
-def toggle_socket(target, action):
-    socket = Energenie(int(target))
-    logging.info("Turning '" + action + "' socket '" + str(target) + "'")
-    if action == "on":
-        socket.on()
-    else:
-        socket.off()
 
 
 def get_lock(process_name):
@@ -45,6 +38,29 @@ def get_lock(process_name):
             time.sleep(timedelay)
             continue
         break
+
+def toggle_socket(action, mysocket):
+    # do the actual switching here...
+    if action == "ON":
+        if mysocket == "ALL":
+            logging.info("Turning ALL on...")
+            switch_on()
+        else:
+            if int(mysocket) > 0 and int(mysocket) < 5:
+                logging.info("Turning socket '" + mysocket + "' on...")
+                switch_on(int(mysocket))
+            else:
+                logging.debug("Skipping out of range socket.")
+    else:
+        if mysocket == "ALL":
+            logging.info("Turning ALL off...")
+            switch_off()
+        else:
+            if int(mysocket) > 0 and int(mysocket) < 5:
+                logging.info("Turning socket '" + mysocket + "' off...")
+                switch_off(int(mysocket))
+            else:
+                logging.debug("Skipping out of range socket.")
 
 
 if __name__ == "__main__":
@@ -64,27 +80,23 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.DEBUG)
 
+
     logging.info(script_name + " starting...")
     logging.debug("script_dir..: '" + script_dir + "'")
-    logging.debug("len.........: '" + str(len(sys.argv)) + "'")
 
     # reduce startup race conditions...
     timedelay = random.randrange(0, 3)
     time.sleep(timedelay)
 
-    action = sys.argv[1].lower()
-    logging.info("Action......: '" + action + "'")
-    target = sys.argv[2].upper()
-    logging.info("Socket......: '" + target + "'")
+    action = sys.argv[1].upper()
+    logging.debug("Action......: '" + action + "'")
 
     get_lock(script_name)
 
-    if target == "ALL":
-        for socket in range(1,5):
-            toggle_socket(socket, action)
-            time.sleep(1)
-    else:
-        toggle_socket(target, action)
+    for myvar in range(2,len(sys.argv)):
+        mysocket = sys.argv[myvar].upper()
+        logging.debug("mysocket....: '" + mysocket + "'")
+        toggle_socket(action, mysocket)
 
     logging.info(script_name + " completed successfully.")
     sys.exit(retcode)
