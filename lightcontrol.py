@@ -97,6 +97,7 @@ if __name__ == "__main__":
         mysocket = sys.argv[myvar].upper()
         logging.debug("mysocket....: '" + mysocket + "'")
         toggle_socket(action, mysocket)
+        time.sleep(2)
 
     logging.info(script_name + " completed successfully.")
     sys.exit(retcode)
