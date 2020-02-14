@@ -41,26 +41,23 @@ def get_lock(process_name):
 
 def toggle_socket(action, mysocket):
     # do the actual switching here...
-    if action == "ON":
-        if mysocket == "ALL":
+    if mysocket == 'ALL':
+        if action == "ON":
             logging.info("Turning ALL on...")
             switch_on()
         else:
-            if int(mysocket) > 0 and int(mysocket) < 5:
+            logging.info("Turning ALL off...")
+            switch_off()
+    else:
+        if int(mysocket) > 0 and int(mysocket) < 5:
+            if action == "ON":
                 logging.info("Turning socket '" + mysocket + "' on...")
                 switch_on(int(mysocket))
             else:
-                logging.debug("Skipping out of range socket.")
-    else:
-        if mysocket == "ALL":
-            logging.info("Turning ALL off...")
-            switch_off()
-        else:
-            if int(mysocket) > 0 and int(mysocket) < 5:
                 logging.info("Turning socket '" + mysocket + "' off...")
                 switch_off(int(mysocket))
-            else:
-                logging.debug("Skipping out of range socket.")
+        else:
+            logging.debug("Skipping out of range socket.")
 
 
 if __name__ == "__main__":
