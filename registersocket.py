@@ -1,16 +1,16 @@
 #!/usr/bin/python
 """
-Register energenie sockets for control.
+Register an energenie socket.
 
 Usage:
     registersocket.py <socket#> 
 
 Example:
-    registersocket.py 1
+    registersocket.py 3
 
 """
 #import the required modules
-from gpiozero import Energenie
+from energenie import switch_on, switch_off
 import logging
 import os
 import random
@@ -19,13 +19,17 @@ import sys
 import time
 
 
-def toggle_socket(target, action):
-    socket = Energenie(int(target))
-    logging.info("Turning '" + action + "' socket '" + str(target) + "'")
-    if action == "on":
-        socket.on()
+def toggle_socket(action, mysocket):
+    if int(mysocket) > 0 and int(mysocket) < 5:
+        if action == "ON":
+            logging.info("Turning socket '" + mysocket + "' on...")
+            switch_on(int(mysocket))
+        else:
+            logging.info("Turning socket '" + mysocket + "' off...")
+            switch_off(int(mysocket))
+        time.sleep(1)
     else:
-        socket.off()
+        logging.debug("Skipping out of range socket.")
 
 
 if __name__ == "__main__":
@@ -34,30 +38,34 @@ if __name__ == "__main__":
         print(__doc__)
         sys.exit(1)
 
+
     script_name = os.path.basename(__file__)
     script_dir = os.path.dirname(__file__)
     retcode = 0
+
 
     if os.getenv("DEBUG", "") == "":
         logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.INFO)
     else:
         logging.basicConfig(format='%(asctime)s %(levelname)-10s: %(message)s', level=logging.DEBUG)
 
+
     logging.info(script_name + " starting...")
     logging.debug("script_dir..: '" + script_dir + "'")
-    logging.debug("len.........: '" + str(len(sys.argv)) + "'")
 
-    target = int(sys.argv[1])
-    logging.info("Socket......: '" + str(target) + "'")
+    mysocket = sys.argv[1]
+    logging.debug("mysocket....: '" + mysocket + "'")
 
-    if target >= 1 and target <= 4:
-        raw_input("Hit return key to send socket '" + str(target) + "' ON code.")
-        toggle_socket(target, 'on')
-        raw_input("Hit return key to send socket '" + str(target) + "' OFF code.")
-        toggle_socket(target, 'off')
+
+    if int(mysocket) > 0 and int(mysocket) < 5:
+        raw_input("Hit return key to send socket '" + str(mysocket) + "' ON code.")
+        toggle_socket('on', mysocket)
+        raw_input("Hit return key to send socket '" + str(mysocket) + "' OFF code.")
+        toggle_socket('off', mysocket)
     else:
-        logging.info("Socket # must be between 1 and 4, not '" + str(target) + "'.")
+        logging.info("Socket # must be between 1 and 4, not '" + str(mysocket) + "'.")
         sys.exit(2)
+
 
     logging.info(script_name + " completed successfully.")
     sys.exit(retcode)
