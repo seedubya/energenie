@@ -5,11 +5,17 @@ Control pimoroni targets.
 This is reworked from pimoroni's example script. This will take several sockets
 as arguments...
 
-Usage:
+Light control:
     lightcontrol.py <on|off> <socket#|ALL> 
 
 Example:
-    lightcontrol.py ON 1 2 3
+    lightcontrol.py ON 1 2 3    - turn ON sockets 1, 2 & 3
+
+Socket registration:
+    lightcontrol.py reg <socket #>
+
+Example:
+    lightcontrol.py reg 3    - register socket 3
 
 """
 #import the required modules
@@ -90,10 +96,29 @@ if __name__ == "__main__":
 
     get_lock(script_name)
 
-    for myvar in range(2,len(sys.argv)):
-        mysocket = sys.argv[myvar].upper()
-        logging.debug("mysocket....: '" + mysocket + "'")
-        toggle_socket(action, mysocket)
+    if action == 'REG':
+        # register a new socket - we only do 1 at a time...
+        mysocket = sys.argv[2]
+        try:
+            myjunk = int(mysocket)
+            if int(mysocket) > 0 and int(mysocket) < 5 :
+                raw_input("Hit return key to send socket '" + mysocket + "' ON code.")
+                toggle_socket('on', mysocket)
+                raw_input("Hit return key to send socket '" + mysocket + "' OFF code.")
+                toggle_socket('off', mysocket)
+                logging.info("Socket registered.")
+            else:
+                logging.info("Socket # must be between 1 and 4, not '" + mysocket + "'.")
+                sys.exit(2)
+        except ValueError:
+            logging.info("Should be a socket number 1<=x<=4, not '" + mysocket + "'.")
+            sys.exit(3)
+    else:
+        # Turn sockets on or off...
+        for myvar in range(2,len(sys.argv)):
+            mysocket = sys.argv[myvar].upper()
+            logging.debug("mysocket....: '" + mysocket + "'")
+            toggle_socket(action, mysocket)
 
     logging.info(script_name + " completed successfully.")
     sys.exit(retcode)
