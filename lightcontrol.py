@@ -66,6 +66,24 @@ def toggle_socket(action, mysocket):
             logging.debug("Skipping out of range socket.")
 
 
+def register_socket(mysocket):
+    # register a new socket...
+    try:
+        myjunk = int(mysocket)
+        if int(mysocket) > 0 and int(mysocket) < 5 :
+            raw_input("Hit return key to send socket '" + mysocket + "' ON code.")
+            toggle_socket('on', mysocket)
+            raw_input("Hit return key to send socket '" + mysocket + "' OFF code.")
+            toggle_socket('off', mysocket)
+            logging.info("Socket registered.")
+        else:
+            logging.info("Socket # must be between 1 and 4, not '" + mysocket + "'.")
+            sys.exit(2)
+    except ValueError:
+        logging.info("Should be a socket number 1<=x<=4, not '" + mysocket + "'.")
+        sys.exit(3)
+
+
 if __name__ == "__main__":
 
     if len(sys.argv) < 3:
@@ -98,21 +116,7 @@ if __name__ == "__main__":
 
     if action == 'REG':
         # register a new socket - we only do 1 at a time...
-        mysocket = sys.argv[2]
-        try:
-            myjunk = int(mysocket)
-            if int(mysocket) > 0 and int(mysocket) < 5 :
-                raw_input("Hit return key to send socket '" + mysocket + "' ON code.")
-                toggle_socket('on', mysocket)
-                raw_input("Hit return key to send socket '" + mysocket + "' OFF code.")
-                toggle_socket('off', mysocket)
-                logging.info("Socket registered.")
-            else:
-                logging.info("Socket # must be between 1 and 4, not '" + mysocket + "'.")
-                sys.exit(2)
-        except ValueError:
-            logging.info("Should be a socket number 1<=x<=4, not '" + mysocket + "'.")
-            sys.exit(3)
+        register_socket(sys.argv[2])
     else:
         # Turn sockets on or off...
         for myvar in range(2,len(sys.argv)):
