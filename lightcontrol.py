@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """
 Control pimoroni targets.
 
@@ -61,7 +61,7 @@ def toggle_socket(action, mysocket):
             else:
                 logging.info("Turning socket '" + mysocket + "' off...")
                 switch_off(int(mysocket))
-            time.sleep(1)
+            time.sleep(2)
         else:
             logging.debug("Skipping out of range socket.")
 
