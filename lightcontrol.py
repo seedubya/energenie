@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Control pimoroni targets.
+Control energenie targets.
 
 This is reworked from pimoroni's example script. This will take several sockets
 as arguments...
