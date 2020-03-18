@@ -71,9 +71,9 @@ def register_socket(mysocket):
     try:
         myjunk = int(mysocket)
         if int(mysocket) > 0 and int(mysocket) < 5 :
-            raw_input("Hit return key to send socket '" + mysocket + "' ON code.")
+            input("Hit return key to send socket '" + mysocket + "' ON code.")
             toggle_socket('on', mysocket)
-            raw_input("Hit return key to send socket '" + mysocket + "' OFF code.")
+            input("Hit return key to send socket '" + mysocket + "' OFF code.")
             toggle_socket('off', mysocket)
             logging.info("Socket registered.")
         else:
