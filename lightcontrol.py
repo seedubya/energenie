@@ -47,7 +47,7 @@ def get_lock(process_name):
 def toggle_socket(action, mysocket):
     # do the actual switching here...
     if mysocket == 'ALL':
-        if action == "ON":
+        if action.upper() == "ON":
             logging.info("Turning ALL on...")
             switch_on()
         else:
@@ -55,7 +55,7 @@ def toggle_socket(action, mysocket):
             switch_off()
     else:
         if int(mysocket) > 0 and int(mysocket) < 5:
-            if action == "ON":
+            if action.upper() == "ON":
                 logging.info("Turning socket '" + mysocket + "' on...")
                 switch_on(int(mysocket))
             else:
