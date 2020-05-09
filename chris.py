@@ -100,11 +100,10 @@ def wait_for_event(waituntil):
         sun = Sun(float(mylatitude), float(mylongitude))
 
         if waituntil == 'SUNRISE':
-            ##runtime = sun.get_sunrise_time()
             runtime = sun.get_local_sunrise_time()
         else:
-            ##runtime = sun.get_sunset_time()
             runtime = sun.get_local_sunset_time()
+
         logging.info("Waiting until after '" + str(runtime) + "'...")
 
         mytimezone=runtime.tzinfo
@@ -115,9 +114,13 @@ def wait_for_event(waituntil):
         while timenow < runtime:
             logging.debug("Waiting...")
             time.sleep(120)
+            timenow = datetime.now(mytimezone)
+            logging.debug("timenow.....: '" + str(timenow) + "'")
+
+        logging.info("We can proceed...")
 
     else:
-        logging.info("LATITUDE and LONGITUDE are unset, running now...")
+        logging.info("MYLATITUDE and MYLONGITUDE are unset, running now...")
 
 
 if __name__ == "__main__":
@@ -148,7 +151,7 @@ if __name__ == "__main__":
     action = sys.argv[1].upper()
     logging.debug("Action......: '" + action + "'")
 
-    get_lock(script_name)
+    ##get_lock(script_name)
 
     if action == 'REG':
         # register a new socket - we only do 1 at a time...
@@ -160,10 +163,10 @@ if __name__ == "__main__":
 
 
         # Turn sockets on or off...
-        ##for myvar in range(3,len(sys.argv)):
-            ##mysocket = sys.argv[myvar].upper()
-            ##logging.debug("mysocket....: '" + mysocket + "'")
-            ##toggle_socket(action, mysocket)
+        for myvar in range(3,len(sys.argv)):
+            mysocket = sys.argv[myvar].upper()
+            logging.debug("mysocket....: '" + mysocket + "'")
+            toggle_socket(action, mysocket)
 
     logging.info(script_name + " completed successfully.")
     sys.exit(retcode)

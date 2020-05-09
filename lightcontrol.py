@@ -6,10 +6,15 @@ This is reworked from pimoroni's example script. This will take several sockets
 as arguments...
 
 Light control:
-    lightcontrol.py <on|off> <socket#|ALL> 
+    lightcontrol.py <on|off> <sunset|sunrise|now> <socket#|ALL> 
+
+    The sunrise/sunset timings are reliant upon the environment variables
+
+    MYLATITUDE
+    MYLONGITUDE
 
 Example:
-    lightcontrol.py ON 1 2 3    - turn ON sockets 1, 2 & 3
+    lightcontrol.py ON SUNSET 1 2 3    - turn ON sockets 1, 2 & 3
 
 Socket registration:
     lightcontrol.py reg <socket #>
@@ -20,6 +25,8 @@ Example:
 """
 #import the required modules
 from energenie import switch_on, switch_off
+from suntime import Sun, SunTimeException
+from datetime import datetime, timezone
 import logging
 import os
 import random
@@ -83,6 +90,37 @@ def register_socket(mysocket):
         logging.info("Should be a socket number 1<=x<=4, not '" + mysocket + "'.")
         sys.exit(3)
 
+def wait_for_event(waituntil):
+    # wait until sunset/sunrise, assuming we have the info we need...
+    mylatitude = os.getenv("MYLATITUDE", "")
+    logging.debug("mylatitude..: '" + mylatitude + "'")
+    mylongitude = os.getenv("MYLONGITUDE", "")
+    logging.debug("mylongitude.: '" + mylongitude + "'")
+    if mylatitude != "" and mylongitude != "":
+        sun = Sun(float(mylatitude), float(mylongitude))
+
+        if waituntil == 'SUNRISE':
+            runtime = sun.get_local_sunrise_time()
+        else:
+            runtime = sun.get_local_sunset_time()
+
+        logging.info("Waiting until after '" + str(runtime) + "'...")
+
+        mytimezone=runtime.tzinfo
+        logging.debug("mytimezone..: '" + str(mytimezone) + "'")
+
+        timenow = datetime.now(mytimezone)
+        logging.debug("timenow.....: '" + str(timenow) + "'")
+        while timenow < runtime:
+            time.sleep(120)
+            timenow = datetime.now(mytimezone)
+            logging.debug("timenow.....: '" + str(timenow) + "'")
+
+        logging.info("We can proceed...")
+
+    else:
+        logging.info("MYLATITUDE and MYLONGITUDE are unset, running NOW...")
+
 
 if __name__ == "__main__":
 
@@ -118,8 +156,13 @@ if __name__ == "__main__":
         # register a new socket - we only do 1 at a time...
         register_socket(sys.argv[2])
     else:
+        doitwhen = sys.argv[2].upper()
+        if doitwhen == 'SUNSET' or doitwhen == 'SUNRISE':
+            wait_for_event(doitwhen)
+
+
         # Turn sockets on or off...
-        for myvar in range(2,len(sys.argv)):
+        for myvar in range(3,len(sys.argv)):
             mysocket = sys.argv[myvar].upper()
             logging.debug("mysocket....: '" + mysocket + "'")
             toggle_socket(action, mysocket)
