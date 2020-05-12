@@ -141,7 +141,9 @@ if __name__ == "__main__":
 
 
     logging.info(script_name + " starting...")
+    logging.info("Parameters...: '" + ' '.join(sys.argv[1:]) + "'")
     logging.debug("script_dir..: '" + script_dir + "'")
+
 
     # reduce startup race conditions...
     timedelay = random.randrange(0, 3)
