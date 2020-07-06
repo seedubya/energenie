@@ -157,17 +157,20 @@ if __name__ == "__main__":
     if action == 'REG':
         # register a new socket - we only do 1 at a time...
         register_socket(sys.argv[2])
-    else:
+    elif action == 'ON' or action == 'OFF':
         doitwhen = sys.argv[2].upper()
         if doitwhen == 'SUNSET' or doitwhen == 'SUNRISE':
             wait_for_event(doitwhen)
-
-
         # Turn sockets on or off...
         for myvar in range(3,len(sys.argv)):
             mysocket = sys.argv[myvar].upper()
             logging.debug("mysocket....: '" + mysocket + "'")
             toggle_socket(action, mysocket)
+    else:
+        logging.info("Invalid action '" + action + "'!")
+        print(__doc__)
+        sys.exit(11)
+         
 
     logging.info(script_name + " completed successfully.")
     sys.exit(retcode)
