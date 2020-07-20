@@ -8,10 +8,10 @@ as arguments...
 Light control:
     lightcontrol.py <on|off> <sunset|sunrise|now> <socket#|ALL> 
 
-    The sunrise/sunset timings are reliant upon the environment variables
+    The sunrise/sunset timings are reliant upon the environment variables:
 
-    MYLATITUDE
-    MYLONGITUDE
+    MYLATITUDE=51.743162
+    MYLONGITUDE=-0.092190
 
 Example:
     lightcontrol.py ON SUNSET 1 2 3    - turn ON sockets 1, 2 & 3
@@ -152,16 +152,16 @@ if __name__ == "__main__":
     action = sys.argv[1].upper()
     logging.debug("Action......: '" + action + "'")
 
-    get_lock(script_name)
-
     if action == 'REG':
         # register a new socket - we only do 1 at a time...
+        get_lock(script_name)
         register_socket(sys.argv[2])
     elif action == 'ON' or action == 'OFF':
         doitwhen = sys.argv[2].upper()
         if doitwhen == 'SUNSET' or doitwhen == 'SUNRISE':
             wait_for_event(doitwhen)
         # Turn sockets on or off...
+        get_lock(script_name)
         for myvar in range(3,len(sys.argv)):
             mysocket = sys.argv[myvar].upper()
             logging.debug("mysocket....: '" + mysocket + "'")
